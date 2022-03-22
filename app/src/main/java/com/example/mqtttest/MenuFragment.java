@@ -1,14 +1,19 @@
 package com.example.mqtttest;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,6 +22,9 @@ import android.view.ViewGroup;
  */
 public class MenuFragment extends Fragment {
 
+    MonViewModel monViewModel;
+
+    TextView tvUsername;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -44,6 +52,14 @@ public class MenuFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        SharedPreferences prefs = getActivity().getSharedPreferences("test", MODE_PRIVATE);
+        boolean etat = prefs.getBoolean("connecte", false);
+        Log.d("TEST PREFS", "" + etat);
+
+        tvUsername = view.findViewById(R.id.tvUsernameMenu);
+
+        tvUsername.setText(prefs.getString("test", "erreur"));
     }
+
+
 }

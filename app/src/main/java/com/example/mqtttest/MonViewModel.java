@@ -6,9 +6,13 @@ import androidx.lifecycle.ViewModel;
 
 public class MonViewModel extends ViewModel {
 
-    private MutableLiveData<String> account;
+    private MutableLiveData<Account> account;
 
-    public LiveData<String> getAccount() {
+    public LiveData<Account> getAccount() {
         return account;
+    }
+
+    public void setAccount(MutableLiveData<Account> account) {
+        this.account = account;
     }
 }

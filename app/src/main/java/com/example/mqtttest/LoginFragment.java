@@ -55,8 +55,6 @@ public class LoginFragment extends Fragment {
         password = view.findViewById(R.id.ed_password);
         btnConnexion = view.findViewById(R.id.btn_connexion);
 
-        //monViewModel = new ViewModelProvider(requireActivity()).get(MonViewModel.class);
-
         btnConnexion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

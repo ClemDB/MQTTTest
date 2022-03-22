@@ -3,6 +3,11 @@ package com.example.mqtttest;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -14,7 +19,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 
-public class ClientMQTT
+public class ClientMQTT extends AppCompatActivity
 {
     private static final String TAG = "ClientMQTT";
     Context context;
@@ -27,12 +32,13 @@ public class ClientMQTT
     String username = "android";
     String password = "";
 
+
     public ClientMQTT(Context context)
     {
         this.context = context;
 
         creer();
-        connecter();
+       // connecter();
     }
 
     public ClientMQTT(Context context, String serverTTN, int portTTN, String applicationId, String deviceId, String password)
@@ -52,7 +58,7 @@ public class ClientMQTT
         Log.w(TAG, "MqttAndroidClient : publishTopic -> " + publishTopic);
 
         creer();
-        connecter();
+        //connecter();
     }
 
     public void creer()
@@ -77,6 +83,7 @@ public class ClientMQTT
             public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception
             {
                 Log.w(TAG, "MqttAndroidClient : messageArrived -> " + mqttMessage.toString());
+
             }
 
             @Override
