@@ -86,6 +86,7 @@ public class LoginFragment extends Fragment {
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, new CreationCompteFragment()).commit();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+
                 }
             }
         });

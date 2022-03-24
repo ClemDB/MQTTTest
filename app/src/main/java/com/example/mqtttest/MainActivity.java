@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         menuFragment.clientMQTT = clientMQTT;
         creationCompteFragment.clientMQTT = clientMQTT;
 
+
         showFragment(loginFragment);
     }
 

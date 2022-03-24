@@ -104,6 +104,7 @@
                 android:layout_height="wrap_content"
                 android:minWidth="200dp"
                 android:text="Ajouter" />
+
         </LinearLayout>
 
     </LinearLayout>

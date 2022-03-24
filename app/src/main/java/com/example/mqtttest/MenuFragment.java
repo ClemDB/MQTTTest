@@ -87,6 +87,7 @@ public class MenuFragment extends Fragment {
                 Log.w(TAG,"connectComplete");
                 try {
                     Thread.sleep(2000);
+
                     monViewModel.getAccounts().observe(getViewLifecycleOwner(), accounts -> {
                         clientMQTT.publishMessage("getcharacter " + accounts.get(0).username + " " + accounts.get(0).password);
                     });

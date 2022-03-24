@@ -89,6 +89,7 @@ public class CreationCompteFragment extends Fragment {
                 if (!edMdp.getText().toString().equals(edMdp2.getText().toString())) {
                     Toast.makeText(getActivity(), "Erreur, les 2 mots de passe ne sont pas identique.", Toast.LENGTH_LONG).show();
                     return;
+
                 }
 
                 clientMQTT.publishMessage("addUser" + nom + " " + mdp);
