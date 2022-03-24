@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     LoginFragment loginFragment;
     MenuFragment menuFragment;
+    CreationCompteFragment creationCompteFragment;
     Context c = this;
 
     @Override
@@ -38,10 +39,12 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         loginFragment  = LoginFragment.newInstance();
         menuFragment = MenuFragment.newInstance();
+        creationCompteFragment = CreationCompteFragment.newInstance();
 
         clientMQTT = new ClientMQTT(getApplicationContext());
         loginFragment.clientMQTT = clientMQTT;
         menuFragment.clientMQTT = clientMQTT;
+        creationCompteFragment.clientMQTT = clientMQTT;
 
         showFragment(loginFragment);
     }
