@@ -1,8 +1,6 @@
 package com.example.mqtttest;
 
-import androidx.lifecycle.MutableLiveData;
-
-public class Account extends MutableLiveData<Account> {
+public class Account {
 
     String username, password;
 
@@ -25,5 +23,13 @@ public class Account extends MutableLiveData<Account> {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }
