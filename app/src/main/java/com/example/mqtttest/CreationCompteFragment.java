@@ -58,12 +58,11 @@ public class CreationCompteFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        mqttInfo();
-
-        btAjouter = view.findViewById(R.id.btAjouter);
+        btAjouter = view.findViewById(R.id.btnAjouterUser);
         edNom = view.findViewById(R.id.edNom);
         edMdp = view.findViewById(R.id.edMdp);
         edMdp2 = view.findViewById(R.id.edMdp2);
+
 
         btAjouter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,9 +91,12 @@ public class CreationCompteFragment extends Fragment {
 
                 }
 
-                clientMQTT.publishMessage("addUser" + nom + " " + mdp);
+                clientMQTT.publishMessage("adduser " + nom + " " + mdp);
             }
         });
+
+
+        mqttInfo();
     }
 
     private void mqttInfo()
