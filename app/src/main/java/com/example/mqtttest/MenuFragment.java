@@ -31,7 +31,7 @@ public class MenuFragment extends Fragment {
     public static ClientMQTT clientMQTT;
     MonViewModel monViewModel;
     TextView tvUsername, tvChaName, tvChaLevel, tvChaHP, tvChaMP;
-    Button btnPersonnages;
+    Button btnPersonnages, btnStart;
     String TAG = "MenuFragment";
 
     public MenuFragment() {
@@ -66,6 +66,7 @@ public class MenuFragment extends Fragment {
         tvChaHP = view.findViewById(R.id.tvMenuChaHP);
         tvChaMP = view.findViewById(R.id.tvMenuChaMP);
         btnPersonnages = view.findViewById(R.id.btnMenuPersonnages);
+        btnStart = view.findViewById(R.id.btnMenuStart);
         monViewModel = new ViewModelProvider(requireActivity()).get(MonViewModel.class);
 
         monViewModel.getAccounts().observe(getViewLifecycleOwner(), accounts -> {
@@ -73,6 +74,13 @@ public class MenuFragment extends Fragment {
         });
 
         mqttInfo();
+
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, new GameFragment()).commit();
+            }
+        });
     }
 
     private void mqttInfo()
