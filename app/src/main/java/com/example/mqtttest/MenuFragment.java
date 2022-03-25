@@ -1,5 +1,6 @@
 package com.example.mqtttest;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -28,14 +29,19 @@ import java.util.List;
  */
 public class MenuFragment extends Fragment {
 
-    public static ClientMQTT clientMQTT;
-    MonViewModel monViewModel;
+
     TextView tvUsername, tvChaName, tvChaLevel, tvChaHP, tvChaMP;
     Button btnPersonnages, btnStart;
     String TAG = "MenuFragment";
+    private InterfaceMenu interfaceMenu;
 
     public MenuFragment() {
         // Required empty public constructor
+    }
+
+    public interface InterfaceMenu{
+        void showFragment(Fragment f);
+        void setInfoMenu(TextView username, TextView chaName, TextView chaLevel, TextView chaHP, TextView chaMP);
     }
 
     public static MenuFragment newInstance() {
@@ -67,32 +73,43 @@ public class MenuFragment extends Fragment {
         tvChaMP = view.findViewById(R.id.tvMenuChaMP);
         btnPersonnages = view.findViewById(R.id.btnMenuPersonnages);
         btnStart = view.findViewById(R.id.btnMenuStart);
-        monViewModel = new ViewModelProvider(requireActivity()).get(MonViewModel.class);
 
+        //tvUsername.setText(interfaceMenu.getAccount().username);
+        interfaceMenu.setInfoMenu(tvUsername, tvChaName, tvChaLevel, tvChaHP, tvChaMP);
+        /*
         monViewModel.getAccounts().observe(getViewLifecycleOwner(), accounts -> {
             tvUsername.setText(accounts.get(0).username);
         });
+         */
 
         btnPersonnages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*
                 monViewModel.getAccounts().observe(getViewLifecycleOwner(), accounts -> {
                     clientMQTT.publishMessage("getchajson " + accounts.get(0).username + " " + accounts.get(0).password);
                 });
+                 */
             }
         });
-
-        mqttInfo();
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, new GameFragment()).commit();
+                //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, new GameFragment()).commit();
+                interfaceMenu.showFragment(new GameFragment());
             }
         });
 
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        interfaceMenu = (MenuFragment.InterfaceMenu)context;
+    }
+/*
     private void mqttInfo()
     {
        clientMQTT.reconnecter();
@@ -135,7 +152,6 @@ public class MenuFragment extends Fragment {
                         tvChaLevel.setText(String.valueOf(characters.get(0).level));
                         tvChaHP.setText(String.valueOf(characters.get(0).hp));
                         tvChaMP.setText(String.valueOf(characters.get(0).mp));
-
                     });
                 }
             }
@@ -157,4 +173,5 @@ public class MenuFragment extends Fragment {
         }
         return positions;
     }
+ */
 }

@@ -2,6 +2,7 @@ package com.example.mqtttest;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -27,13 +28,16 @@ public class CreationCompteFragment extends Fragment {
 
     EditText edNom, edMdp, edMdp2;
     Button btAjouter;
-    public static ClientMQTT clientMQTT;
     String nom, mdp, mdp2;
     String TAG = "creationCompteFragment";
-    MonViewModel monViewModel;
+    private InterfaceCreationCompte interfaceCreationCompte;
 
     public CreationCompteFragment() {
         // Required empty public constructor
+    }
+
+    public interface InterfaceCreationCompte {
+        void sendMessage(String msg);
     }
 
     // TODO: Rename and change types and number of parameters
@@ -91,62 +95,15 @@ public class CreationCompteFragment extends Fragment {
 
                 }
 
-                clientMQTT.publishMessage("adduser " + nom + " " + mdp);
-            }
-        });
-
-
-        mqttInfo();
-    }
-
-    private void mqttInfo()
-    {
-        clientMQTT.reconnecter();
-
-        clientMQTT.mqttAndroidClient.setCallback(new MqttCallbackExtended()
-        {
-            @Override
-            public void connectComplete(boolean b, String s)
-            {
-                Log.w(TAG,"connectComplete");
-            }
-
-            @Override
-            public void connectionLost(Throwable throwable)
-            {
-                Log.w(TAG,"connectionLost");
-            }
-
-            @Override
-            public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception
-            {
-                Log.w(TAG, "messageArrived : " + mqttMessage.toString());
-                String msg = mqttMessage.toString();
-                //Log.w(TAG, "SubString : " + msg.substring(0, result.get(1)));
-
-                if(msg.equals("addUser : Success"))
-                {
-                    clientMQTT.deconnecter();
-                    Thread.sleep(2000);
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, new LoginFragment()).commit();
-                }
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken)
-            {
-                Log.w(TAG, "deliveryComplete");
+                interfaceCreationCompte.sendMessage("adduser " + nom + " " + mdp);
             }
         });
     }
 
-    public ArrayList<Integer> findPositions(String string, char character) {
-        ArrayList<Integer> positions = new ArrayList<>();
-        for (int i = 0; i < string.length(); i++){
-            if (string.charAt(i) == character) {
-                positions.add(i);
-            }
-        }
-        return positions;
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        interfaceCreationCompte = (CreationCompteFragment.InterfaceCreationCompte)context;
     }
 }
