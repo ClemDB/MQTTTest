@@ -73,6 +73,15 @@ public class MenuFragment extends Fragment {
             tvUsername.setText(accounts.get(0).username);
         });
 
+        btnPersonnages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                monViewModel.getAccounts().observe(getViewLifecycleOwner(), accounts -> {
+                    clientMQTT.publishMessage("getchajson " + accounts.get(0).username + " " + accounts.get(0).password);
+                });
+            }
+        });
+
         mqttInfo();
 
         btnStart.setOnClickListener(new View.OnClickListener() {

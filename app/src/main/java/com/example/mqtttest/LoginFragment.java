@@ -1,6 +1,6 @@
 package com.example.mqtttest;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,7 +20,6 @@ import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,9 +33,14 @@ public class LoginFragment extends Fragment {
     public static ClientMQTT clientMQTT;
     MonViewModel monViewModel;
     String TAG = "LoginFragment";
+    private MonInterface monInterface;
 
     public LoginFragment() {
         // Required empty public constructor
+    }
+
+    public interface MonInterface{
+        void implementMethode();
     }
 
     public static LoginFragment newInstance() {
@@ -80,6 +84,7 @@ public class LoginFragment extends Fragment {
         btAjouterCompte.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*
                 clientMQTT.deconnecter();
                 try {
                     Thread.sleep(2000);
@@ -88,10 +93,19 @@ public class LoginFragment extends Fragment {
                     e.printStackTrace();
 
                 }
+
+                 */
+                monInterface.implementMethode();
             }
         });
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        monInterface = (MonInterface)context;
+    }
 
     private void mqttInfo()
     {
