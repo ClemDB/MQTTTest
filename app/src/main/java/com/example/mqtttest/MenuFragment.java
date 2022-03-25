@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -31,6 +32,7 @@ public class MenuFragment extends Fragment {
 
 
     TextView tvUsername, tvChaName, tvChaLevel, tvChaHP, tvChaMP;
+    CardView cardView;
     Button btnPersonnages, btnStart;
     String TAG = "MenuFragment";
     private InterfaceMenu interfaceMenu;
@@ -41,7 +43,7 @@ public class MenuFragment extends Fragment {
 
     public interface InterfaceMenu{
         void showFragment(Fragment f);
-        void setInfoMenu(TextView username, TextView chaName, TextView chaLevel, TextView chaHP, TextView chaMP);
+        void setInfoMenu(CardView cv, TextView username, TextView chaName, TextView chaLevel, TextView chaHP, TextView chaMP);
     }
 
     public static MenuFragment newInstance() {
@@ -66,6 +68,7 @@ public class MenuFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        cardView = view.findViewById(R.id.cardViewMenu);
         tvUsername = view.findViewById(R.id.tvUsernameMenu);
         tvChaName = view.findViewById(R.id.tvMenuChaName);
         tvChaLevel = view.findViewById(R.id.tvMenuChaLevel);
@@ -75,7 +78,7 @@ public class MenuFragment extends Fragment {
         btnStart = view.findViewById(R.id.btnMenuStart);
 
         //tvUsername.setText(interfaceMenu.getAccount().username);
-        interfaceMenu.setInfoMenu(tvUsername, tvChaName, tvChaLevel, tvChaHP, tvChaMP);
+        interfaceMenu.setInfoMenu(cardView, tvUsername, tvChaName, tvChaLevel, tvChaHP, tvChaMP);
         /*
         monViewModel.getAccounts().observe(getViewLifecycleOwner(), accounts -> {
             tvUsername.setText(accounts.get(0).username);

@@ -1,6 +1,7 @@
 package com.example.mqtttest;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     Context c = this;
     Account account;
     List<Character> characterList;
+    boolean co;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
             public void connectComplete(boolean b, String s)
             {
                 Log.w(TAG,"connectComplete");
+                co = true;
             }
 
             @Override
@@ -83,25 +86,31 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
             @Override
             public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception
             {
-                Log.w(TAG, "messageArrived : " + mqttMessage.toString());
-                String msg = mqttMessage.toString();
-                ArrayList<Integer> result = findPositions(msg,' ');
-                //Log.w(TAG, "SubString : " + msg.substring(0, result.get(1)));
+                if(co) {
+                    Log.w(TAG, "messageArrived : " + mqttMessage.toString());
+                    String msg = mqttMessage.toString();
+                    ArrayList<Integer> result = findPositions(msg,' ');
+                    //Log.w(TAG, "SubString : " + msg.substring(0, result.get(0)).trim());
 
-                if(msg.substring(0, result.get(1)).equals("tryco valide"))
-                {
-                    account = new Account(msg.substring(result.get(1), result.get(2)).trim(), msg.substring(result.get(2)).trim());
-                    clientMQTT.publishMessage("getcharacter " + account.username + " " + account.password);
-                    Toast.makeText(c, "connexion réussie", Toast.LENGTH_LONG).show();
-                }
-                else if(msg.substring(0, result.get(0)).trim().equals("getCharacter")){
-                    List<Character> c = new ArrayList();
-                    c.add(new Character(msg.substring(result.get(2) + 2, result.get(3) - 2), Integer.parseInt(msg.substring(result.get(3) + 1, result.get(4) -1)), Integer.parseInt(msg.substring(result.get(4) + 1, result.get(5) -1)), Integer.parseInt(msg.substring(result.get(5) + 1, result.get(6) -1)), Integer.parseInt(msg.substring(result.get(6) + 1, result.get(7) -1)), msg.substring(result.get(7) + 2, result.get(8) - 3)));
-                    characterList = c;
-                    showFragment(menuFragment);
-                }
-                else if(msg.equals("addUser : Success")) {
-                    showFragment(loginFragment);
+                    if(msg.trim().equals("getchaempty")) {
+                        showFragment(menuFragment);
+                    }
+
+                    if(msg.substring(0, result.get(1)).equals("tryco valide"))
+                    {
+                        account = new Account(msg.substring(result.get(1), result.get(2)).trim(), msg.substring(result.get(2)).trim());
+                        clientMQTT.publishMessage("getcharacter " + account.username + " " + account.password);
+                        Toast.makeText(c, "connexion réussie", Toast.LENGTH_LONG).show();
+                    }
+                    else if(msg.substring(0, result.get(0)).trim().equals("getCharacter") && msg.length() > 30){
+                        List<Character> c = new ArrayList();
+                        c.add(new Character(msg.substring(result.get(2) + 2, result.get(3) - 2), Integer.parseInt(msg.substring(result.get(3) + 1, result.get(4) - 1)), Integer.parseInt(msg.substring(result.get(4) + 1, result.get(5) - 1)), Integer.parseInt(msg.substring(result.get(5) + 1, result.get(6) - 1)), Integer.parseInt(msg.substring(result.get(6) + 1, result.get(7) - 1)), msg.substring(result.get(7) + 2, result.get(8) - 3)));
+                        characterList = c;
+                        showFragment(menuFragment);
+                    }
+                    else if(msg.equals("addUser : Success")) {
+                        showFragment(loginFragment);
+                    }
                 }
             }
 
@@ -132,11 +141,15 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     }
 
     @Override
-    public void setInfoMenu(TextView username, TextView chaName, TextView chaLevel, TextView chaHP, TextView chaMP) {
+    public void setInfoMenu(CardView cv, TextView username, TextView chaName, TextView chaLevel, TextView chaHP, TextView chaMP) {
         username.setText(account.username);
-        chaName.setText(characterList.get(0).name);
-        chaLevel.setText(String.valueOf(characterList.get(0).level));
-        chaHP.setText(String.valueOf(characterList.get(0).hp));
-        chaMP.setText(String.valueOf(characterList.get(0).mp));
+        cv.setVisibility(View.GONE);
+        if(characterList.size() > 0)
+        {
+            chaName.setText(characterList.get(0).name);
+            chaLevel.setText(String.valueOf(characterList.get(0).level));
+            chaHP.setText(String.valueOf(characterList.get(0).hp));
+            chaMP.setText(String.valueOf(characterList.get(0).mp));
+        }
     }
 }
