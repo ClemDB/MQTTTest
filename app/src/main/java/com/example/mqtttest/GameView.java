@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+
 public class GameView extends View {
 
     private Bitmap bmTiles1, bmTiles2;

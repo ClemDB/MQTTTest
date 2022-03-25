@@ -18,6 +18,7 @@ public class Tiles {
         return bm;
     }
 
+
     public void setBm(Bitmap bm) {
         this.bm = bm;
     }

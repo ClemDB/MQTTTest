@@ -81,6 +81,7 @@ public class MenuFragment extends Fragment {
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, new GameFragment()).commit();
             }
         });
+
     }
 
     private void mqttInfo()
