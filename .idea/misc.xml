@@ -3,8 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/mael-/StudioProjects/MQTTTest/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2645" />
+        <entry key="..\:/Users/mael-/StudioProjects/MQTTTest/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2645" />
         <entry key="..\:/Users/mael-/StudioProjects/MQTTTest/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/mael-/StudioProjects/MQTTTest/app/src/main/res/layout/fragment_creation_compte.xml" value="0.23697916666666666" />
+        <entry key="..\:/Users/mael-/StudioProjects/MQTTTest/app/src/main/res/layout/fragment_game.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/mael-/StudioProjects/MQTTTest/app/src/main/res/layout/fragment_login.xml" value="0.35260416666666666" />
         <entry key="..\:/Users/mael-/StudioProjects/MQTTTest/app/src/main/res/layout/fragment_menu.xml" value="0.2526041666666667" />
       </map>

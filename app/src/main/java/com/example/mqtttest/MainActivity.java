@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -22,13 +23,14 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.InterfaceLogin, MenuFragment.InterfaceMenu, CreationCompteFragment.InterfaceCreationCompte {
+public class MainActivity extends AppCompatActivity implements LoginFragment.InterfaceLogin, MenuFragment.InterfaceMenu, CreationCompteFragment.InterfaceCreationCompte, GameFragment.InterfaceGame {
 
     public static ClientMQTT clientMQTT = null;
     private static final String TAG = "MainActivity";
     FragmentManager fragmentManager;
     LoginFragment loginFragment;
     MenuFragment menuFragment;
+    GameFragment gameFragment;
     CreationCompteFragment creationCompteFragment;
     Context c = this;
     Account account;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         fragmentManager = getSupportFragmentManager();
         loginFragment  = LoginFragment.newInstance();
         menuFragment = MenuFragment.newInstance();
+        gameFragment = GameFragment.newInstance();
         creationCompteFragment = CreationCompteFragment.newInstance();
 
         characterList = new ArrayList<>();
@@ -56,12 +59,18 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         clientMQTT = new ClientMQTT(getApplicationContext());
 
         mqttInfo();
-        showFragment(loginFragment);
+        showFragment(gameFragment);
     }
 
     @Override
     public void sendMessage(String msg) {
         clientMQTT.publishMessage(msg);
+    }
+
+    @Override
+    public void changeRotation() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        showFragment(gameFragment);
     }
 
     private void mqttInfo()
@@ -100,9 +109,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                     {
                         account = new Account(msg.substring(result.get(1), result.get(2)).trim(), msg.substring(result.get(2)).trim());
                         clientMQTT.publishMessage("getcharacter " + account.username + " " + account.password);
-                        Toast.makeText(c, "connexion réussie", Toast.LENGTH_LONG).show();
+                        Toast.makeText(c, "connexion en cours", Toast.LENGTH_SHORT).show();
                     }
-                    else if(msg.substring(0, result.get(0)).trim().equals("getCharacter") && msg.length() > 30){
+                    else if(msg.substring(0, result.get(0)).trim().equals("getCharacter") && msg.length() > 25){
                         List<Character> c = new ArrayList();
                         c.add(new Character(msg.substring(result.get(2) + 2, result.get(3) - 2), Integer.parseInt(msg.substring(result.get(3) + 1, result.get(4) - 1)), Integer.parseInt(msg.substring(result.get(4) + 1, result.get(5) - 1)), Integer.parseInt(msg.substring(result.get(5) + 1, result.get(6) - 1)), Integer.parseInt(msg.substring(result.get(6) + 1, result.get(7) - 1)), msg.substring(result.get(7) + 2, result.get(8) - 3)));
                         characterList = c;
@@ -143,13 +152,14 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     @Override
     public void setInfoMenu(CardView cv, TextView username, TextView chaName, TextView chaLevel, TextView chaHP, TextView chaMP) {
         username.setText(account.username);
-        cv.setVisibility(View.GONE);
-        if(characterList.size() > 0)
-        {
+        if(characterList.size() > 0) {
             chaName.setText(characterList.get(0).name);
             chaLevel.setText(String.valueOf(characterList.get(0).level));
             chaHP.setText(String.valueOf(characterList.get(0).hp));
             chaMP.setText(String.valueOf(characterList.get(0).mp));
+        }
+        else {
+            cv.setVisibility(View.GONE);
         }
     }
 }

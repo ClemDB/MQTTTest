@@ -1,5 +1,8 @@
 package com.example.mqtttest;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,11 +16,16 @@ import android.view.ViewGroup;
 
 public class GameFragment extends Fragment {
 
-    MonViewModel viewModel;
+    private InterfaceGame interfaceGame;
 
     public GameFragment() {
         // Required empty public constructor
     }
+    public interface InterfaceGame {
+        void sendMessage(String msg);
+        void changeRotation();
+    }
+
 
     public static GameFragment newInstance() {
         GameFragment fragment = new GameFragment();
@@ -39,7 +47,14 @@ public class GameFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        viewModel = new ViewModelProvider(requireActivity()).get(MonViewModel.class);
+        //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        interfaceGame.changeRotation();
+    }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        interfaceGame = (GameFragment.InterfaceGame)context;
     }
 }

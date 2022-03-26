@@ -15,8 +15,8 @@ import java.util.ArrayList;
 public class GameView extends View {
 
     private Bitmap bmTiles1, bmTiles2;
-    public static int sizeOfMap = 75*Constants.SCREEN_WIDTH/1550;
-    private int h = 10, w = 18;
+    public static int sizeOfMap = 75*Constants.SCREEN_WIDTH/1000;
+    private int h = 8, w = 24;
     private ArrayList<Tiles> arrayTiles = new ArrayList<>();
 
     public GameView(Context context, @Nullable AttributeSet attrs) {
@@ -29,10 +29,10 @@ public class GameView extends View {
             for (int j = 0; j < w; j++) {
                 if ((i+j)%2==0) {
                     arrayTiles.add(new Tiles(bmTiles1, j*sizeOfMap + Constants.SCREEN_WIDTH/2-(w/2)*sizeOfMap,
-                            i*sizeOfMap+100*Constants.SCREEN_HEIGHT/1920, sizeOfMap, sizeOfMap));
+                            i*sizeOfMap+100*Constants.SCREEN_HEIGHT/1000, sizeOfMap, sizeOfMap));
                 } else {
                     arrayTiles.add(new Tiles(bmTiles2, j*sizeOfMap + Constants.SCREEN_WIDTH/2-(w/2)*sizeOfMap,
-                            i*sizeOfMap+100*Constants.SCREEN_HEIGHT/1920, sizeOfMap, sizeOfMap));
+                            i*sizeOfMap+100*Constants.SCREEN_HEIGHT/1000, sizeOfMap, sizeOfMap));
                 }
             }
         }

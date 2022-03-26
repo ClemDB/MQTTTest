@@ -1,6 +1,7 @@
 package com.example.mqtttest;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
