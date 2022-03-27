@@ -5,6 +5,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -23,7 +24,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.InterfaceLogin, MenuFragment.InterfaceMenu, CreationCompteFragment.InterfaceCreationCompte, GameFragment.InterfaceGame {
+public class MainActivity extends AppCompatActivity implements LoginFragment.InterfaceLogin, MenuFragment.InterfaceMenu, CreationCompteFragment.InterfaceCreationCompte, GameFragment.InterfaceGame, CharactersFragment.InterfaceCharacters {
 
     public static ClientMQTT clientMQTT = null;
     private static final String TAG = "MainActivity";
@@ -59,12 +60,18 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         clientMQTT = new ClientMQTT(getApplicationContext());
 
         mqttInfo();
-        showFragment(gameFragment);
+        showFragment(loginFragment);
     }
 
     @Override
     public void sendMessage(String msg) {
         clientMQTT.publishMessage(msg);
+    }
+
+    @Override
+    public void getCharacters(AdapterList adapterList, RecyclerView rvlist) {
+        adapterList = new AdapterList(characterList);
+        rvlist.setAdapter(adapterList);
     }
 
     @Override

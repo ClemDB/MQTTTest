@@ -21,6 +21,7 @@ public class GameFragment extends Fragment {
     public GameFragment() {
         // Required empty public constructor
     }
+
     public interface InterfaceGame {
         void sendMessage(String msg);
         void changeRotation();
