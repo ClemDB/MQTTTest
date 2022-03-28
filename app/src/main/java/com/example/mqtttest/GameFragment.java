@@ -3,6 +3,7 @@ package com.example.mqtttest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Canvas;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,10 +14,13 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 public class GameFragment extends Fragment {
 
     private InterfaceGame interfaceGame;
+    GameView gameView;
+    Button btnStart, btnDroite;
 
     public GameFragment() {
         // Required empty public constructor
@@ -25,6 +29,8 @@ public class GameFragment extends Fragment {
     public interface InterfaceGame {
         void sendMessage(String msg);
         void changeRotation();
+        void showFragment(Fragment f);
+        void setChaName();
     }
 
 
@@ -48,8 +54,25 @@ public class GameFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        interfaceGame.changeRotation();
+        //interfaceGame.showFragment(this);
+        gameView = view.findViewById(R.id.gv);
+        btnStart = view.findViewById(R.id.btnStart);
+        btnDroite = view.findViewById(R.id.buttonDroite);
+        //gameView.setPos(0, 0);
+        //interfaceGame.setGameView(gameView);
+        btnDroite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gameView.setPos(gameView.x + 1 , gameView.y);
+            }
+        });
+
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                interfaceGame.setChaName();
+            }
+        });
     }
 
     @Override

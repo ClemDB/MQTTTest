@@ -21,6 +21,7 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         clientMQTT = new ClientMQTT(getApplicationContext());
 
         mqttInfo();
-        showFragment(loginFragment);
+        showFragment(gameFragment);
     }
 
     @Override
@@ -112,6 +113,37 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                         showFragment(menuFragment);
                     }
 
+                    if(msg.substring(0, result.get(0)).trim().equals("curPos")) {
+                        ArrayList<Integer> tir = findPositions(msg,'-');
+                        ArrayList<Integer> par = findPositions(msg,'(');
+                        ArrayList<Integer> par2 = findPositions(msg,')');
+                        Log.d(TAG, "x:" + msg.substring(par.get(0) +2, tir.get(0)) + " y:" + msg.substring(tir.get(0) +1, par2.get(0) -2));
+                        Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
+                        if(f instanceof GameFragment) {
+                            int x = Integer.parseInt(msg.substring(par.get(0) +2, tir.get(0)));
+                            int y = Integer.parseInt(msg.substring(tir.get(0) +1, par2.get(0) -2));
+                            ((GameFragment) f).gameView.setPos(x,y);
+                            //Log.d(TAG, "mouvement effectue");
+                        }
+                    }
+
+                    if(msg.substring(0, result.get(0)).trim().equals("mouvement")) {
+                        ArrayList<Integer> tiret = findPositions(msg,'-');
+
+                        Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
+                        if(f instanceof GameFragment) {
+                            //Log.d(TAG, "pos x:" + msg.substring(result.get(0) + 1, tiret.get(0)) + " y:" + msg.substring(tiret.get(0) + 1));
+                            int x = Integer.parseInt(msg.substring(result.get(0) + 1, tiret.get(0)));
+                            int y = Integer.parseInt(msg.substring(tiret.get(0) + 1));
+                            //Log.d(TAG, "pos x:" + x + " y:" + y);
+                            ((GameFragment) f).gameView.setPos(x,y);
+                            //Log.d(TAG, "mouvement effectue");
+                        } else {
+                            Log.d(TAG, "Le mode landscape essaie de te faire couler ta session");
+                        }
+
+                    }
+
                     if(msg.substring(0, result.get(1)).equals("tryco valide"))
                     {
                         account = new Account(msg.substring(result.get(1), result.get(2)).trim(), msg.substring(result.get(2)).trim());
@@ -154,6 +186,14 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         fragmentTransaction.replace(R.id.fragmentContainerView, f);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    public void setChaName() {
+        //clientMQTT.publishMessage("setChaName " + characterList.get(0).name);
+        clientMQTT.publishMessage("startGame");
+        clientMQTT.publishMessage("setChaName test");
+
     }
 
     @Override

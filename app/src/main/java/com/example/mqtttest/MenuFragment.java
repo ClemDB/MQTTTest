@@ -45,6 +45,7 @@ public class MenuFragment extends Fragment {
     public interface InterfaceMenu{
         void showFragment(Fragment f);
         void setInfoMenu(CardView cv, TextView username, TextView chaName, TextView chaLevel, TextView chaHP, TextView chaMP);
+        void changeRotation();
     }
 
     public static MenuFragment newInstance() {
@@ -94,7 +95,7 @@ public class MenuFragment extends Fragment {
                     clientMQTT.publishMessage("getchajson " + accounts.get(0).username + " " + accounts.get(0).password);
                 });
                  */
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, new CharactersFragment()).commit();
+                interfaceMenu.changeRotation();
             }
         });
 
@@ -102,7 +103,7 @@ public class MenuFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, new GameFragment()).commit();
-                interfaceMenu.showFragment(new GameFragment());
+                interfaceMenu.changeRotation();
             }
         });
 
