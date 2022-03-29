@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         clientMQTT = new ClientMQTT(getApplicationContext());
 
         mqttInfo();
-        showFragment(gameFragment);
+        showFragment(loginFragment);
     }
 
     @Override

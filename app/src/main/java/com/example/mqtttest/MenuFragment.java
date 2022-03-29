@@ -95,7 +95,7 @@ public class MenuFragment extends Fragment {
                     clientMQTT.publishMessage("getchajson " + accounts.get(0).username + " " + accounts.get(0).password);
                 });
                  */
-                interfaceMenu.changeRotation();
+                interfaceMenu.showFragment(new GameFragment());
             }
         });
 
