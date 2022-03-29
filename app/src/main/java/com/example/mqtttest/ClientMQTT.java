@@ -24,7 +24,7 @@ public class ClientMQTT extends AppCompatActivity
     private static final String TAG = "ClientMQTT";
     Context context;
     public MqttAndroidClient mqttAndroidClient = null;
-    String serverUri = "tcp://192.168.2.62:1883";
+    String serverUri = "tcp://172.16.207.63:1883";
     int portTTN = 1883;
     String clientId = "android";
     String subscriptionTopic = "raspi";

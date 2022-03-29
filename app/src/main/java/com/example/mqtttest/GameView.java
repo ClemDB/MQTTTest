@@ -15,8 +15,8 @@ import java.util.ArrayList;
 public class GameView extends View {
 
     private Bitmap bmTiles1, bmTiles2, bmCharacter;
-    public static int sizeOfMap = 80*Constants.SCREEN_WIDTH/1150;
-    private int h = 8, w = 24;
+    public static int sizeOfMap = 81*Constants.SCREEN_WIDTH/1940;
+    private int h = 9, w = 24;
     private ArrayList<Tiles> arrayTiles = new ArrayList<>();
     public int x, y;
 
@@ -32,10 +32,10 @@ public class GameView extends View {
             for (int j = 0; j < w; j++) {
                 if ((i+j)%2==0) {
                     arrayTiles.add(new Tiles(bmTiles1, j*sizeOfMap + Constants.SCREEN_WIDTH/2-(w/2)*sizeOfMap,
-                            i*sizeOfMap+100*Constants.SCREEN_HEIGHT/900, sizeOfMap, sizeOfMap));
+                            i*sizeOfMap+100*Constants.SCREEN_HEIGHT/3000, sizeOfMap, sizeOfMap));
                 } else {
                     arrayTiles.add(new Tiles(bmTiles2, j*sizeOfMap + Constants.SCREEN_WIDTH/2-(w/2)*sizeOfMap,
-                            i*sizeOfMap+100*Constants.SCREEN_HEIGHT/900, sizeOfMap, sizeOfMap));
+                            i*sizeOfMap+100*Constants.SCREEN_HEIGHT/3000, sizeOfMap, sizeOfMap));
                 }
             }
         }
