@@ -16,6 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class GameFragment extends Fragment {
 
     private InterfaceGame interfaceGame;
@@ -30,7 +33,7 @@ public class GameFragment extends Fragment {
         void sendMessage(String msg);
         void changeRotation();
         void showFragment(Fragment f);
-        void setChaName();
+        void setChaName(GameView gv);
     }
 
 
@@ -70,9 +73,23 @@ public class GameFragment extends Fragment {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                interfaceGame.setChaName();
+                interfaceGame.setChaName(gameView);
             }
         });
+
+        Timer timer = new Timer();
+        TimerTask t = new TimerTask() {
+            @Override
+            public void run() {
+                gameView.mouvementMonstre();
+
+                if (((gameView.x == gameView.xm1 && gameView.y == gameView.ym) || (gameView.x == gameView.xm2 && gameView.y == gameView.ym) && !gameView.isDead)) {
+                    gameView.isDead = true;
+                    interfaceGame.sendMessage("playerDead");
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(t,500,500);
     }
 
     @Override
@@ -81,4 +98,5 @@ public class GameFragment extends Fragment {
 
         interfaceGame = (GameFragment.InterfaceGame)context;
     }
+
 }

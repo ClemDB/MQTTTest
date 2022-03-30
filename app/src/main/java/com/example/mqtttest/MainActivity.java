@@ -37,7 +37,10 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     Context c = this;
     Account account;
     List<Character> characterList;
+    int tabMurs[][] = new int [100][2];
+    List<Monstre> listeM = new ArrayList();
     boolean co;
+    int ctr = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         clientMQTT = new ClientMQTT(getApplicationContext());
 
         mqttInfo();
-        showFragment(loginFragment);
+        showFragment(gameFragment);
     }
 
     @Override
@@ -113,6 +116,62 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                         showFragment(menuFragment);
                     }
 
+                    if(msg.substring(0, result.get(0)).trim().equals("posSortie")) {
+                        //Log.d(TAG, "indddd");
+                        ArrayList<Integer> tiret = findPositions(msg,'-');
+
+                        Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
+                        if(f instanceof GameFragment) {
+                            //Log.d(TAG, "pos x:" + msg.substring(result.get(0) + 1, tiret.get(0)) + " y:" + msg.substring(tiret.get(0) + 1));
+                            int x = Integer.parseInt(msg.substring(result.get(0) + 1, tiret.get(0)));
+                            int y = Integer.parseInt(msg.substring(tiret.get(0) + 1));
+                            //Log.d(TAG, "pos x:" + x + " y:" + y);
+                            ((GameFragment) f).gameView.setSortie(x,y);
+                            //Log.d(TAG, "sortie effectue");
+                        } else {
+                            Log.d(TAG, "else sortie");
+                        }
+                    }
+
+
+                    if(msg.substring(0, result.get(0)).trim().equals("monstre")) {
+                        ArrayList<Integer> vir = findPositions(msg,'-');
+
+                        int x = Integer.parseInt(msg.substring(result.get(0) + 1, vir.get(0)));
+                        int y = Integer.parseInt(msg.substring(vir.get(0) + 1, vir.get(1)));
+                        int  sens = Integer.parseInt(msg.substring(vir.get(1) + 1, vir.get(2)));
+                        int  distance =Integer.parseInt(msg.substring(vir.get(2) + 1));
+
+                        listeM.add(new Monstre(x,y,sens,distance));
+                        Log.d(TAG,listeM.get(0).toString());
+
+
+                        Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
+                        if(f instanceof GameFragment) {
+                            ((GameFragment) f).gameView.setMonstres(listeM);
+                        } else {
+                            Log.d(TAG, "error instance of submur");
+                        }
+                    }
+
+                    if(msg.substring(0, result.get(0)).trim().equals("mur")) {
+                        ArrayList<Integer> vir = findPositions(msg,',');
+                        int x = Integer.parseInt(msg.substring(result.get(0) + 1, vir.get(0)));
+                        int y = Integer.parseInt( msg.substring(vir.get(0) + 1));
+                        //Log.d(TAG, "submur x:" + x);
+                        //Log.d(TAG, "submur y:" + y);
+                        tabMurs[ctr][0] = x;
+                        tabMurs[ctr][1] = y;
+                        ctr++;
+
+                        Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
+                        if(f instanceof GameFragment) {
+                            ((GameFragment) f).gameView.setMur(tabMurs);
+                        } else {
+                            Log.d(TAG, "error instance of submur");
+                        }
+                    }
+
                     if(msg.substring(0, result.get(0)).trim().equals("curPos")) {
                         ArrayList<Integer> tir = findPositions(msg,'-');
                         ArrayList<Integer> par = findPositions(msg,'(');
@@ -124,7 +183,10 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                             int y = Integer.parseInt(msg.substring(tir.get(0) +1, par2.get(0) -2));
                             ((GameFragment) f).gameView.setPos(x,y);
                             //Log.d(TAG, "mouvement effectue");
+                        } else {
+                            Log.d(TAG, "Le mode landscape essaie de te faire couler ta session");
                         }
+
                     }
 
                     if(msg.substring(0, result.get(0)).trim().equals("mouvement")) {
@@ -189,8 +251,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     }
 
     @Override
-    public void setChaName() {
+    public void setChaName(GameView gv) {
         //clientMQTT.publishMessage("setChaName " + characterList.get(0).name);
+        gv.isStart = true;
         clientMQTT.publishMessage("startGame");
         clientMQTT.publishMessage("setChaName test");
 
