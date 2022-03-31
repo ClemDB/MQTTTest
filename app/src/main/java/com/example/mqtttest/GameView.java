@@ -186,7 +186,6 @@ public class GameView extends View {
             for (int ctr = 0; ctr < listeCheckPoint.size(); ctr++) {
                 if (x == listeCheckPoint.get(ctr).x && y == listeCheckPoint.get(ctr).y) {
                     listeCheckPoint.get(ctr).setCheck(true);
-
                 }
                 if(!listeCheckPoint.get(ctr).isCheck()){
                     r=false;
