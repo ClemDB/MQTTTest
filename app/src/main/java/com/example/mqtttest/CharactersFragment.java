@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class CharactersFragment extends Fragment {
     public AdapterList adapterList;
     RecyclerView rvListe;
     private InterfaceCharacters interfaceCharacters;
+    public LinearLayout divLayout;
 
     public CharactersFragment() {
         // Required empty public constructor
@@ -29,6 +32,7 @@ public class CharactersFragment extends Fragment {
     public interface InterfaceCharacters {
         void sendMessage(String msg);
         void getCharacters(AdapterList adapterList, RecyclerView rvList);
+        boolean getHasCha();
     }
 
     public static CharactersFragment newInstance() {
@@ -54,6 +58,7 @@ public class CharactersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        divLayout = view.findViewById(R.id.divAjouter);
         rvListe = view.findViewById(R.id.rvListCharacters);
         rvListe.setHasFixedSize(true);
         rvListe.setLayoutManager(new LinearLayoutManager(getContext()));

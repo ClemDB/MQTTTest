@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,12 @@ public class GameView extends View {
     boolean flagPiege=true;
     public boolean win = false;
     public int currentLevel = 1;
+    //tracker stats
+    Instant start;
+
+    Instant finish;
+
+    public int nbCoup=0;
 
     public GameView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -347,6 +355,8 @@ public class GameView extends View {
         listeM = new ArrayList<>();
         listeMur = new ArrayList<>();
         sortie = new Sortie(200,200);
+        nbCoup=0;
+        start = Instant.now();
         invalidate();
     }
 }

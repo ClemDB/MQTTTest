@@ -1,5 +1,6 @@
 package com.example.mqtttest;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -14,6 +15,9 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -53,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     boolean co;
     int ctr = 0;
     int ctrPieges = 0;
+    boolean hasCha = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         clientMQTT = new ClientMQTT(getApplicationContext());
 
         mqttInfo();
-        showFragment(gameFragment);
+        showFragment(loginFragment);
     }
 
     @Override
@@ -88,6 +93,11 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     public void getCharacters(AdapterList adapterList, RecyclerView rvlist) {
         adapterList = new AdapterList(characterList);
         rvlist.setAdapter(adapterList);
+    }
+
+    @Override
+    public boolean getHasCha() {
+        return hasCha;
     }
 
     @Override
@@ -127,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
 
                     if(msg.trim().equals("getchaempty")) {
                         showFragment(menuFragment);
+                        hasCha = false;
                     }
 
                     try {
@@ -285,6 +296,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                             int y = Integer.parseInt(msg.substring(tiret.get(0) + 1));
                             //Log.d(TAG, "pos x:" + x + " y:" + y);
                             ((GameFragment) f).gameView.setPos(x,y);
+                            ((GameFragment) f).gameView.nbCoup++;
                             //Log.d(TAG, "mouvement effectue");
                         } else {
                             Log.d(TAG, "Le mode landscape essaie de te faire couler ta session");
@@ -318,6 +330,24 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId() == R.id.ajouterCha) {
+
+        }
+
+        return true;
+    }
+
     public ArrayList<Integer> findPositions(String string, char character) {
         ArrayList<Integer> positions = new ArrayList<>();
         for (int i = 0; i < string.length(); i++){
@@ -339,6 +369,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     @Override
     public void setStart(GameView gv, int level) {
         //clientMQTT.publishMessage("setChaName " + characterList.get(0).name);
+        reset();
         gv.isStart = true;
         clientMQTT.publishMessage("startGame " + level);
         clientMQTT.publishMessage("setChaName test");
@@ -357,6 +388,11 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         setStart(gv, gv.currentLevel + 1);
     }
 
+    @Override
+    public void showPopupD(View view, GameView gv) {
+        showD(view, gv);
+    }
+
     public void showP(View v, GameView gv, JSONArray j) throws JSONException {
             LayoutInflater inflater = (LayoutInflater)
                     getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -371,22 +407,36 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
             // show the popup window
             // which view you pass in doesn't matter, it is only used for the window tolken
             popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
-        TextView tv1 = popupView.findViewById(R.id.tvn1);
-        TextView tv2 = popupView.findViewById(R.id.tvn2);
-        TextView tv3 = popupView.findViewById(R.id.tvn3);
+        TextView tvnom1 = popupView.findViewById(R.id.tvName1);
+        TextView tvcoup1 = popupView.findViewById(R.id.tvNbrCoups1);
+        TextView tvtemps1 = popupView.findViewById(R.id.tvTemps1);
+        TextView tvnom2 = popupView.findViewById(R.id.tvName2);
+        TextView tvcoup2 = popupView.findViewById(R.id.tvNbrCoups2);
+        TextView tvtemps2 = popupView.findViewById(R.id.tvTemps2);
+        TextView tvnom3 = popupView.findViewById(R.id.tvName3);
+        TextView tvcoup3 = popupView.findViewById(R.id.tvNbrCoups3);
+        TextView tvtemps3 = popupView.findViewById(R.id.tvTemps3);
         int n = j.length();
         for(int i=0;i<n;i++){
             JSONObject score = j.getJSONObject(i);
             switch(i){
                 case 0:
-                    tv1.setText(score.getString("name") + " - " + score.getInt("nbrCout") +" - " +score.getDouble("temps"));
+                    tvnom1.setText(score.getString("name"));
+                    tvcoup1.setText(""+score.getInt("nbrCout"));
+                    tvtemps1.setText(""+score.getInt("temps"));
                     break;
                 case 1:
-                    tv2.setText(score.getString("name") + " - " + score.getInt("nbrCout") +" - " +score.getDouble("temps"));
+                    tvnom2.setText(score.getString("name"));
+                    tvcoup2.setText(""+score.getInt("nbrCout"));
+                    tvtemps2.setText(""+score.getInt("temps"));
                     break;
+
                 case 2:
-                    tv3.setText(score.getString("name") + " - " + score.getInt("nbrCout") +" - " +score.getDouble("temps"));
+                    tvnom3.setText(score.getString("name"));
+                    tvcoup3.setText(""+score.getInt("nbrCout"));
+                    tvtemps3.setText(""+score.getInt("temps"));
                     break;
+
             }
 
         }
@@ -402,6 +452,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                 popupWindow.dismiss();
             }
         });
+
 
         btnNiveauSuivant.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -422,6 +473,42 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         listeMur = new ArrayList<>();
     }
 
+    public void showD(View v, GameView gv) {
+        Log.d(TAG,"inShowD");
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_layout, null);
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // show the popup window
+        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+
+
+        TextView titre = popupView.findViewById(R.id.tvPopup_Titre);
+        Button btnRecommencer = popupView.findViewById(R.id.btnPopup_Retry);
+        Button btnNiveauSuivant = popupView.findViewById(R.id.btnPopup_Suivant);
+        LinearLayout linearTab = popupView.findViewById(R.id.linearTab);
+        btnRecommencer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                reset();
+                gv.reset();
+                setStart(gv, gv.currentLevel);
+                popupWindow.dismiss();
+            }
+        });
+
+        titre.setText("Defaite");
+        btnNiveauSuivant.setVisibility(View.GONE);
+        linearTab.setVisibility(View.GONE);
+
+    }
 
     @Override
     public void setInfoMenu(CardView cv, TextView username, TextView chaName, TextView chaLevel, TextView chaHP, TextView chaMP) {

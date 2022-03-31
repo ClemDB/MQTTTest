@@ -26,155 +26,179 @@
                 android:textSize="34sp" />
 
             <LinearLayout
+                android:id="@+id/linearTab"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="30dp"
                 android:background="#DCD9D9"
-                android:orientation="vertical"
                 android:padding="20dp">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
+                    android:layout_weight="0.25"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/textView6"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1"
                         android:gravity="center"
                         android:text="Position" />
-
-                    <TextView
-                        android:id="@+id/textView7"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
-                        android:text="Personnage" />
-
-                    <TextView
-                        android:id="@+id/textView8"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
-                        android:text="Nombre de coups" />
-
-                    <TextView
-                        android:id="@+id/textView10"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
-                        android:text="Temps" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/tvn1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
                         android:gravity="center"
                         android:text="1 -" />
 
                     <TextView
-                        android:id="@+id/tvName1"
+                        android:id="@+id/tvn3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:id="@+id/tvNbrCoups1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:id="@+id/tvTemps1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="2 -" />
 
                     <TextView
                         android:id="@+id/tvn2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
                         android:gravity="center"
-                        android:text="2 -" />
+                        android:text="3 -" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.25"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvTemps2"
+                        android:id="@+id/textView7"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center" />
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Personnage" />
 
                     <TextView
-                        android:id="@+id/tvNbrCoups2"
+                        android:id="@+id/tvName1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
                         android:gravity="center" />
 
                     <TextView
                         android:id="@+id/tvName2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:id="@+id/tvName3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.25"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView8"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Nombre de coups" />
+
+                    <TextView
+                        android:id="@+id/tvNbrCoups1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:id="@+id/tvNbrCoups2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:id="@+id/tvNbrCoups3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
                         android:gravity="center" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:layout_weight="0.25"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvn3"
+                        android:id="@+id/textView10"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1"
                         android:gravity="center"
-                        android:text="3 -" />
+                        android:text="Temps(s)" />
 
                     <TextView
-                        android:id="@+id/textView20"
+                        android:id="@+id/tvTemps1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
                         android:gravity="center" />
 
                     <TextView
-                        android:id="@+id/textView21"
+                        android:id="@+id/tvTemps2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
                         android:gravity="center" />
 
                     <TextView
-                        android:id="@+id/textView22"
+                        android:id="@+id/tvTemps3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
                         android:gravity="center" />
                 </LinearLayout>
 

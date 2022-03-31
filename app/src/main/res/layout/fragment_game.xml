@@ -40,16 +40,26 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btnLevel1"
+                        android:id="@+id/btnNiveau1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="5dp"
                         android:text="Niveau 1" />
 
                     <Button
                         android:id="@+id/btnNiveau2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="5dp"
                         android:text="Niveau 2" />
+
+                    <Button
+                        android:id="@+id/btnNiveau3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="5dp"
+                        android:layout_weight="1"
+                        android:text="Niveau 3" />
 
                 </LinearLayout>
             </RelativeLayout>
