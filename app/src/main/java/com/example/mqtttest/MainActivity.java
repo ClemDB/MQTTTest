@@ -12,8 +12,13 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,9 +26,11 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.InterfaceLogin, MenuFragment.InterfaceMenu, CreationCompteFragment.InterfaceCreationCompte, GameFragment.InterfaceGame, CharactersFragment.InterfaceCharacters {
 
@@ -37,10 +44,15 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     Context c = this;
     Account account;
     List<Character> characterList;
-    int tabMurs[][] = new int [100][2];
+    List<Mur> listeMur = new ArrayList<>();
+
+    List<Piege>listeP = new ArrayList<>();
     List<Monstre> listeM = new ArrayList();
+    List<Flag> listeCheckPoint = new ArrayList();
+    View view;
     boolean co;
     int ctr = 0;
+    int ctrPieges = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,9 +124,31 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                     ArrayList<Integer> result = findPositions(msg,' ');
                     //Log.w(TAG, "SubString : " + msg.substring(0, result.get(0)).trim());
 
+
                     if(msg.trim().equals("getchaempty")) {
                         showFragment(menuFragment);
                     }
+
+                    try {
+                        if(msg.substring(0,19).equals("getLeaderboardFinal")) {
+
+
+                            JSONArray leaderboard =  new JSONArray(msg.substring(20));
+                            Log.d(TAG, " sub19: " + msg.substring(21));
+                            Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
+                            if(f instanceof GameFragment) {
+                                Log.d(TAG, " InPop");
+                                ((GameFragment) f).workerThread(leaderboard);
+
+                            } else {
+                                Log.d(TAG, "else sortie");
+                            }
+                        }
+
+                    } catch (Exception e) {}
+
+
+
 
                     if(msg.substring(0, result.get(0)).trim().equals("posSortie")) {
                         //Log.d(TAG, "indddd");
@@ -134,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                     }
 
 
+
                     if(msg.substring(0, result.get(0)).trim().equals("monstre")) {
                         ArrayList<Integer> vir = findPositions(msg,'-');
 
@@ -143,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                         int  distance =Integer.parseInt(msg.substring(vir.get(2) + 1));
 
                         listeM.add(new Monstre(x,y,sens,distance));
-                        Log.d(TAG,listeM.get(0).toString());
+                        //Log.d(TAG,listeM.get(0).toString());
 
 
                         Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
@@ -160,15 +195,66 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                         int y = Integer.parseInt( msg.substring(vir.get(0) + 1));
                         //Log.d(TAG, "submur x:" + x);
                         //Log.d(TAG, "submur y:" + y);
-                        tabMurs[ctr][0] = x;
-                        tabMurs[ctr][1] = y;
-                        ctr++;
+                        Mur m = new Mur(x,y);
+                        listeMur.add(m);
 
                         Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
                         if(f instanceof GameFragment) {
-                            ((GameFragment) f).gameView.setMur(tabMurs);
+                            ((GameFragment) f).gameView.setMur(listeMur);
                         } else {
                             Log.d(TAG, "error instance of submur");
+                        }
+                    }
+
+                    if(msg.substring(0, result.get(0)).trim().equals("posSortie")) {
+                        ArrayList<Integer> vir = findPositions(msg,'-');
+                        int x = Integer.parseInt(msg.substring(result.get(0) + 1, vir.get(0)));
+                        int y = Integer.parseInt( msg.substring(vir.get(0) + 1));
+                        //Log.d(TAG, "subSortie x:" + x);
+                        //Log.d(TAG, "subSortie y:" + y);
+
+
+
+                        Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
+                        if(f instanceof GameFragment) {
+                            ((GameFragment) f).gameView.setSortie(x,y);
+                        } else {
+                            Log.d(TAG, "error instance of submur");
+                        }
+                    }
+
+                    if(msg.substring(0, result.get(0)).trim().equals("piege")) {
+                        ArrayList<Integer> vir = findPositions(msg,',');
+                        int x = Integer.parseInt(msg.substring(result.get(0) + 1, vir.get(0)));
+                        int y = Integer.parseInt( msg.substring(vir.get(0) + 1));
+                        Piege p = new Piege(x,y);
+                        //Log.d(TAG, "subpiege x:" + x);
+                        //Log.d(TAG, "subpiege y:" + y);
+                        listeP.add(p);
+
+
+                        Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
+                        if(f instanceof GameFragment) {
+                            ((GameFragment) f).gameView.setPieges(listeP);
+                        } else {
+                            Log.d(TAG, "error instance of subPieges");
+                        }
+                    }
+
+                    if(msg.substring(0, result.get(0)).trim().equals("checkpoint")) {
+                        ArrayList<Integer> vir = findPositions(msg,',');
+                        int x = Integer.parseInt(msg.substring(result.get(0) + 1, vir.get(0)));
+                        int y = Integer.parseInt( msg.substring(vir.get(0) + 1));
+                        //Log.d(TAG, "subCheckpoint x:" + x);
+                        //Log.d(TAG, "subCheckpoint y:" + y);
+
+                        listeCheckPoint.add(new Flag(x, y));
+
+                        Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
+                        if(f instanceof GameFragment) {
+                            ((GameFragment) f).gameView.setCheckPoint(listeCheckPoint);
+                        } else {
+                            Log.d(TAG, "error instance of subPieges");
                         }
                     }
 
@@ -176,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                         ArrayList<Integer> tir = findPositions(msg,'-');
                         ArrayList<Integer> par = findPositions(msg,'(');
                         ArrayList<Integer> par2 = findPositions(msg,')');
-                        Log.d(TAG, "x:" + msg.substring(par.get(0) +2, tir.get(0)) + " y:" + msg.substring(tir.get(0) +1, par2.get(0) -2));
+                        //Log.d(TAG, "x:" + msg.substring(par.get(0) +2, tir.get(0)) + " y:" + msg.substring(tir.get(0) +1, par2.get(0) -2));
                         Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
                         if(f instanceof GameFragment) {
                             int x = Integer.parseInt(msg.substring(par.get(0) +2, tir.get(0)));
@@ -251,13 +337,91 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     }
 
     @Override
-    public void setChaName(GameView gv) {
+    public void setStart(GameView gv, int level) {
         //clientMQTT.publishMessage("setChaName " + characterList.get(0).name);
         gv.isStart = true;
-        clientMQTT.publishMessage("startGame");
+        clientMQTT.publishMessage("startGame " + level);
         clientMQTT.publishMessage("setChaName test");
 
     }
+
+    @Override
+    public void showPopup(View v, GameView gv,JSONArray j) throws JSONException {
+        showP(v, gv,j);
+    }
+
+    @Override
+    public void nextLevel(View v, GameView gv) {
+        reset();
+        gv.reset();
+        setStart(gv, gv.currentLevel + 1);
+    }
+
+    public void showP(View v, GameView gv, JSONArray j) throws JSONException {
+            LayoutInflater inflater = (LayoutInflater)
+                    getSystemService(LAYOUT_INFLATER_SERVICE);
+            View popupView = inflater.inflate(R.layout.popup_layout, null);
+
+            // create the popup window
+            int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            boolean focusable = true; // lets taps outside the popup also dismiss it
+            final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+            // show the popup window
+            // which view you pass in doesn't matter, it is only used for the window tolken
+            popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+        TextView tv1 = popupView.findViewById(R.id.tvn1);
+        TextView tv2 = popupView.findViewById(R.id.tvn2);
+        TextView tv3 = popupView.findViewById(R.id.tvn3);
+        int n = j.length();
+        for(int i=0;i<n;i++){
+            JSONObject score = j.getJSONObject(i);
+            switch(i){
+                case 0:
+                    tv1.setText(score.getString("name") + " - " + score.getInt("nbrCout") +" - " +score.getDouble("temps"));
+                    break;
+                case 1:
+                    tv2.setText(score.getString("name") + " - " + score.getInt("nbrCout") +" - " +score.getDouble("temps"));
+                    break;
+                case 2:
+                    tv3.setText(score.getString("name") + " - " + score.getInt("nbrCout") +" - " +score.getDouble("temps"));
+                    break;
+            }
+
+        }
+
+        Button btnRecommencer = popupView.findViewById(R.id.btnPopup_Retry);
+        Button btnNiveauSuivant = popupView.findViewById(R.id.btnPopup_Suivant);
+        btnRecommencer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                reset();
+                gv.reset();
+                setStart(gv, gv.currentLevel);
+                popupWindow.dismiss();
+            }
+        });
+
+        btnNiveauSuivant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                reset();
+                gv.reset();
+                gv.currentLevel++;
+                setStart(gv, gv.currentLevel);
+                popupWindow.dismiss();
+            }
+        });
+    }
+
+    private void reset() {
+        listeCheckPoint = new ArrayList<>();
+        listeP = new ArrayList<>();
+        listeM = new ArrayList<>();
+        listeMur = new ArrayList<>();
+    }
+
 
     @Override
     public void setInfoMenu(CardView cv, TextView username, TextView chaName, TextView chaLevel, TextView chaHP, TextView chaMP) {

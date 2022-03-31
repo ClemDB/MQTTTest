@@ -8,26 +8,43 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameView extends View {
 
-    private Bitmap bmTiles1, bmTiles2, bmCharacter, bmMur, bmEye, bmTrap, bmRedFlag, bmGreenFlag, bmOpenDoor, bmClosedDoor;
+    private Bitmap bmTiles1, bmTiles2, bmCharacter, bmMur, bmEye, bmTrap1, bmTrap2, bmTrap3, bmRedFlag, bmGreenFlag, bmOpenDoor, bmClosedDoor;
     public static int sizeOfMap = 80*Constants.SCREEN_WIDTH/1600;
+    // Hauteur largeur longeur tableau
     private int h = 8, w = 20;
+    // Array de chaque tiles
     private ArrayList<Tiles> arrayTiles = new ArrayList<>();
+    // Position joueur
     public int x, y;
-    public int xm1, xm2, yS = 0, xS = 19;
-    private int clem [][];
+    // Position de base sortie
+    public Sortie sortie = new Sortie(200,200);
+    // Position pieges
+    public int xP, yP;
+    //Tableau mur
+    public List<Mur> listeMur = new ArrayList<>();
+    // Tableau de piege
+    public List<Piege> listeP = new ArrayList<>();
+    // Liste monstre
     public List<Monstre> listeM = new ArrayList<>();
-    public int ym=0;
-    boolean descend=true;
+    // Liste Checkpoint
+    public List<Flag> listeCheckPoint = new ArrayList<>();
     boolean chowSortie = false;
     boolean isDead = false;
     public boolean isStart = false;
+    public String TAG = "GameView";
+    int cycle=0;
+    boolean flagPiege=true;
+    public boolean win = false;
+    public int currentLevel = 1;
 
     public GameView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -41,18 +58,16 @@ public class GameView extends View {
         bmMur = Bitmap.createScaledBitmap(bmMur, sizeOfMap, sizeOfMap, true);
         bmEye = BitmapFactory.decodeResource(this.getResources(), R.drawable.flyingeye);
         bmEye = Bitmap.createScaledBitmap(bmEye, sizeOfMap, sizeOfMap, true);
-        bmTrap = BitmapFactory.decodeResource(this.getResources(), R.drawable.impale);
-        bmTrap = Bitmap.createScaledBitmap(bmTrap, sizeOfMap, sizeOfMap, true);
+        bmTrap1 = BitmapFactory.decodeResource(this.getResources(), R.drawable.impale_0);
+        bmTrap1 = Bitmap.createScaledBitmap(bmTrap1, sizeOfMap, sizeOfMap, true);
         bmRedFlag = BitmapFactory.decodeResource(this.getResources(), R.drawable.flag_red);
         bmRedFlag = Bitmap.createScaledBitmap(bmRedFlag, sizeOfMap, sizeOfMap, true);
         bmGreenFlag = BitmapFactory.decodeResource(this.getResources(), R.drawable.flag_green);
         bmGreenFlag = Bitmap.createScaledBitmap(bmGreenFlag, sizeOfMap, sizeOfMap, true);
         bmOpenDoor = BitmapFactory.decodeResource(this.getResources(), R.drawable.open_door);
         bmOpenDoor = Bitmap.createScaledBitmap(bmOpenDoor, sizeOfMap, sizeOfMap, true);
-        bmClosedDoor = BitmapFactory.decodeResource(this.getResources(), R.drawable.open_door);
+        bmClosedDoor = BitmapFactory.decodeResource(this.getResources(), R.drawable.close_door);
         bmClosedDoor = Bitmap.createScaledBitmap(bmClosedDoor, sizeOfMap, sizeOfMap, true);
-        xm1=4;
-        xm2=8;
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
                 if ((i+j)%2==0) {
@@ -69,8 +84,6 @@ public class GameView extends View {
 
     }
 
-
-
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
@@ -79,32 +92,58 @@ public class GameView extends View {
             canvas.drawBitmap(arrayTiles.get(i).getBm(), arrayTiles.get(i).getX(), arrayTiles.get(i).getY(), null);
         }
 
-        if(isStart) {
-            // Draw cqrqctere
-            canvas.drawBitmap(bmCharacter, x * sizeOfMap + Constants.SCREEN_WIDTH / 2 - (w / 2) * sizeOfMap, y * sizeOfMap + 50 * Constants.SCREEN_HEIGHT / 3000, null);
-            if(listeM != null){
-                for ( int ctr2=0;ctr2<listeM.size();ctr2++)
-                {
-                    canvas.drawBitmap(bmEye, listeM.get(ctr2).x * sizeOfMap + Constants.SCREEN_WIDTH / 2 - (w / 2) * sizeOfMap, listeM.get(ctr2).y * sizeOfMap + 50 * Constants.SCREEN_HEIGHT / 3000, null);
+        if(!win) {
+            if(isStart) {
+                // Draw caractere
+                canvas.drawBitmap(bmCharacter, x * sizeOfMap + Constants.SCREEN_WIDTH / 2 - (w / 2) * sizeOfMap, y * sizeOfMap + 50 * Constants.SCREEN_HEIGHT / 3000, null);
+                if(listeM != null){
+                    for ( int ctr2=0;ctr2<listeM.size();ctr2++)
+                    {
+                        // Draw monstre
+                        canvas.drawBitmap(bmEye, listeM.get(ctr2).x * sizeOfMap + Constants.SCREEN_WIDTH / 2 - (w / 2) * sizeOfMap, listeM.get(ctr2).y * sizeOfMap + 50 * Constants.SCREEN_HEIGHT / 3000, null);
+                    }
                 }
             }
 
+            // Draw murs
+            if(isStart && win == false) {
+                if (listeMur != null)
+                    for (Mur m : listeMur){
+                        if (!(m.getX() == 0 && m.getY() == 0)) {
+                            canvas.drawBitmap(bmMur, m.getX()*sizeOfMap + Constants.SCREEN_WIDTH/2-(w/2)*sizeOfMap, m.getY()*sizeOfMap+50*Constants.SCREEN_HEIGHT/3000, null);
+                        }
+                    }
+            }
 
+            // Draw pieges
+            if (listeP != null)
+                for (int ctr3 = 0; ctr3 < listeP.size(); ctr3++) {
+                    if (!(listeP.get(ctr3).getX() == 0 && listeP.get(ctr3).getY() == 0)) {
+                        canvas.drawBitmap(bmTrap1, listeP.get(ctr3).getX() * sizeOfMap + Constants.SCREEN_WIDTH / 2 - (w / 2) * sizeOfMap, listeP.get(ctr3).getY() * sizeOfMap + 50 * Constants.SCREEN_HEIGHT / 3000, null);
+                    }
+                }
+
+            if(listeCheckPoint != null)
+                for (int ctr = 0; ctr < listeCheckPoint.size(); ctr++) {
+                    if (listeCheckPoint.get(ctr).check)
+                        canvas.drawBitmap(bmGreenFlag, listeCheckPoint.get(ctr).x * sizeOfMap + Constants.SCREEN_WIDTH / 2 - (w / 2) * sizeOfMap, listeCheckPoint.get(ctr).y * sizeOfMap + 50 * Constants.SCREEN_HEIGHT / 3000, null);
+                    else
+                        canvas.drawBitmap(bmRedFlag, listeCheckPoint.get(ctr).x * sizeOfMap + Constants.SCREEN_WIDTH / 2 - (w / 2) * sizeOfMap, listeCheckPoint.get(ctr).y * sizeOfMap + 50 * Constants.SCREEN_HEIGHT / 3000, null);
+                }
+
+
+            // Draw sortie
+            if(chowSortie)
+                if(!sortie.isCheck())
+                    canvas.drawBitmap(bmClosedDoor, sortie.getX()*sizeOfMap + Constants.SCREEN_WIDTH/2-(w/2)*sizeOfMap, sortie.getY()*sizeOfMap+50*Constants.SCREEN_HEIGHT/3000, null);
+                else{
+                    canvas.drawBitmap(bmOpenDoor, sortie.getX()*sizeOfMap + Constants.SCREEN_WIDTH/2-(w/2)*sizeOfMap, sortie.getY()*sizeOfMap+50*Constants.SCREEN_HEIGHT/3000, null);
+                }
         }
-
-        if (clem != null)
-            for (int ctr = 0; ctr < clem.length; ctr++){
-                if (!(clem[ctr][0] == 0 && clem[ctr][1] == 0)) {
-                    canvas.drawBitmap(bmMur, clem[ctr][0]*sizeOfMap + Constants.SCREEN_WIDTH/2-(w/2)*sizeOfMap, clem[ctr][1]*sizeOfMap+50*Constants.SCREEN_HEIGHT/3000, null);
-                }
-            }
-
-        if(chowSortie)
-            canvas.drawBitmap(bmMur, xS*sizeOfMap + Constants.SCREEN_WIDTH/2-(w/2)*sizeOfMap, yS*sizeOfMap+50*Constants.SCREEN_HEIGHT/3000, null);
     }
 
-    public void setMur(int dave[][]) {
-        clem = dave;
+    public void setMur(List<Mur> l) {
+        listeMur = l;
         invalidate();
     }
 
@@ -113,10 +152,19 @@ public class GameView extends View {
         invalidate();
     }
 
+    public void setCheckPoint(List<Flag> l) {
+        listeCheckPoint = l;
+        invalidate();
+    }
+
     public void setSortie(int x, int y) {
-        xS = x;
-        yS = y;
+        sortie = new Sortie(x,y);
         chowSortie = true;
+        invalidate();
+    }
+
+    public void setPieges(List<Piege> l) {
+        listeP = l;
         invalidate();
     }
 
@@ -124,10 +172,69 @@ public class GameView extends View {
         if(!isDead) {
             this.x = x;
             this.y = y;
+            //interfaceGameView.sendMessage("prout");
+            for (int ctr = 0; ctr < listeM.size(); ctr++) {
+                if (x == listeM.get(ctr).getX() && y == listeM.get(ctr).getY()) {
+                    isDead=true;
+                    //interfaceGameView.sendMessage("playerDead");
+                }
+
+
+            }
+
+            boolean r = true;
+            for (int ctr = 0; ctr < listeCheckPoint.size(); ctr++) {
+                if (x == listeCheckPoint.get(ctr).x && y == listeCheckPoint.get(ctr).y) {
+                    listeCheckPoint.get(ctr).setCheck(true);
+
+                }
+                if(!listeCheckPoint.get(ctr).isCheck()){
+                    r=false;
+                }
+            }
+
+            if(r){
+                sortie.setCheck(true);
+            }
+
+
+
+
+
             invalidate();
         }
-    }
 
+
+    }
+    public void cyclePiege(){
+
+        switch (cycle){
+            case 0:
+                bmTrap1 = BitmapFactory.decodeResource(this.getResources(), R.drawable.impale_0);
+                bmTrap1 = Bitmap.createScaledBitmap(bmTrap1, sizeOfMap, sizeOfMap, true);
+                break;
+            case 1:
+                bmTrap1 = BitmapFactory.decodeResource(this.getResources(), R.drawable.impale_1);
+                bmTrap1 = Bitmap.createScaledBitmap(bmTrap1, sizeOfMap, sizeOfMap, true);
+                break;
+            case 2:
+                bmTrap1 = BitmapFactory.decodeResource(this.getResources(), R.drawable.impale_2);
+                bmTrap1 = Bitmap.createScaledBitmap(bmTrap1, sizeOfMap, sizeOfMap, true);
+                break;
+        }
+        if(flagPiege){
+            cycle++;
+            if(cycle==2){
+                flagPiege=false;
+            }
+        }else{
+            cycle--;
+            if(cycle==0){
+                flagPiege=true;
+            }
+        }
+
+    }
     public void mouvementMonstre( ){
 
         if(!isDead) {
@@ -228,5 +335,19 @@ public class GameView extends View {
             }
 
         }
+    }
+
+    public void reset() {
+        x = 0;
+        y = 0;
+        isStart = false;
+        isDead = false;
+        win = false;
+        listeP = new ArrayList<>();
+        listeCheckPoint = new ArrayList<>();
+        listeM = new ArrayList<>();
+        listeMur = new ArrayList<>();
+        sortie = new Sortie(200,200);
+        invalidate();
     }
 }

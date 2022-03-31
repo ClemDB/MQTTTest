@@ -1,20 +1,21 @@
 package com.example.mqtttest;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.graphics.Canvas;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,7 +34,9 @@ public class GameFragment extends Fragment {
         void sendMessage(String msg);
         void changeRotation();
         void showFragment(Fragment f);
-        void setChaName(GameView gv);
+        void setStart(GameView gv, int level);
+        void showPopup(View view, GameView gv,JSONArray j) throws JSONException;
+        void nextLevel(View v, GameView gv);
     }
 
 
@@ -59,21 +62,16 @@ public class GameFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         //interfaceGame.showFragment(this);
         gameView = view.findViewById(R.id.gv);
-        btnStart = view.findViewById(R.id.btnStart);
-        btnDroite = view.findViewById(R.id.buttonDroite);
+        btnStart = view.findViewById(R.id.btnLevel1);
+        btnDroite = view.findViewById(R.id.btnNiveau2);
         //gameView.setPos(0, 0);
         //interfaceGame.setGameView(gameView);
-        btnDroite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gameView.setPos(gameView.x + 1 , gameView.y);
-            }
-        });
+
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                interfaceGame.setChaName(gameView);
+                interfaceGame.setStart(gameView, 1);
             }
         });
 
@@ -81,15 +79,47 @@ public class GameFragment extends Fragment {
         TimerTask t = new TimerTask() {
             @Override
             public void run() {
-                gameView.mouvementMonstre();
+                if(!gameView.isDead && gameView.win == false){
 
-                if (((gameView.x == gameView.xm1 && gameView.y == gameView.ym) || (gameView.x == gameView.xm2 && gameView.y == gameView.ym) && !gameView.isDead)) {
-                    gameView.isDead = true;
-                    interfaceGame.sendMessage("playerDead");
+                    gameView.cyclePiege();
+                    gameView.mouvementMonstre();
+                    for(Monstre m :gameView.listeM)
+                        if ((m.getX()== gameView.x && m.getY()==gameView.y)) {
+                            gameView.isDead = true;
+
+                        }
+                    for(Piege p :gameView.listeP)
+                        if ((p.getX()== gameView.x && p.getY()==gameView.y)) {
+                            gameView.isDead = true;
+
+                        }
+                    if(gameView.win == false && gameView.sortie.isCheck() && (gameView.x == gameView.sortie.getX() && gameView.y == gameView.sortie.getY())){
+                        gameView.win = true;
+                        interfaceGame.sendMessage("playerWin" + gameView.currentLevel);
+                    }
+
+
+                    if(gameView.isDead){
+                        interfaceGame.sendMessage("playerDead");
+                    }
                 }
+
+
             }
         };
         timer.scheduleAtFixedRate(t,500,500);
+    }
+
+    @WorkerThread
+    void workerThread(JSONArray j) {
+        ContextCompat.getMainExecutor(getContext()).execute(()  -> {
+            // This is where your UI code goes.
+            try {
+                interfaceGame.showPopup(getView(), gameView,j);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
