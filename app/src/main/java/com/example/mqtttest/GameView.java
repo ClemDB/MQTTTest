@@ -138,7 +138,7 @@ public class GameView extends View {
                 switch(listeM.get(ctrm).sens){
                     case 0 :
                         if (listeM.get(ctrm).flag) {
-                            Log.d("dist",listeM.get(ctrm).distance + "" + listeM.get(ctrm).distanceMax);
+
                             listeM.get(ctrm).setDistance(listeM.get(ctrm).getDistance()+1);
                             listeM.get(ctrm).y++;
 
@@ -153,6 +153,72 @@ public class GameView extends View {
                             listeM.get(ctrm).distance=listeM.get(ctrm).distance+1;
                             invalidate();
                             if (listeM.get(ctrm).distance== listeM.get(ctrm).distanceMax ||listeM.get(ctrm).getY()==0){
+                                listeM.get(ctrm).flag=true;
+                                listeM.get(ctrm).distance=0;
+                            }
+                        }
+                        break;
+                    case 1 :
+                        if (listeM.get(ctrm).flag) {
+
+                            listeM.get(ctrm).setDistance(listeM.get(ctrm).getDistance()+1);
+                            listeM.get(ctrm).y--;
+
+                            invalidate();
+                            if (listeM.get(ctrm).distance== listeM.get(ctrm).distanceMax || listeM.get(ctrm).getY()==0){
+                                listeM.get(ctrm).flag=false;
+                                listeM.get(ctrm).distance=0;
+                            }
+
+                        } else if(!listeM.get(ctrm).flag) {
+                            listeM.get(ctrm).y++;
+                            listeM.get(ctrm).distance=listeM.get(ctrm).distance+1;
+                            invalidate();
+                            if (listeM.get(ctrm).distance== listeM.get(ctrm).distanceMax ||listeM.get(ctrm).getY()==7){
+                                listeM.get(ctrm).flag=true;
+                                listeM.get(ctrm).distance=0;
+                            }
+                        }
+                        break;
+                    case 2 :
+                        if (listeM.get(ctrm).flag) {
+
+                            listeM.get(ctrm).setDistance(listeM.get(ctrm).getDistance()+1);
+                            listeM.get(ctrm).x++;
+
+                            invalidate();
+                            if (listeM.get(ctrm).distance== listeM.get(ctrm).distanceMax || listeM.get(ctrm).getX()==19){
+                                listeM.get(ctrm).flag=false;
+                                listeM.get(ctrm).distance=0;
+                            }
+
+                        } else if(!listeM.get(ctrm).flag) {
+                            listeM.get(ctrm).x--;
+                            listeM.get(ctrm).distance=listeM.get(ctrm).distance+1;
+                            invalidate();
+                            if (listeM.get(ctrm).distance== listeM.get(ctrm).distanceMax ||listeM.get(ctrm).getX()==0){
+                                listeM.get(ctrm).flag=true;
+                                listeM.get(ctrm).distance=0;
+                            }
+                        }
+                        break;
+                    case 3 :
+                        if (listeM.get(ctrm).flag) {
+
+                            listeM.get(ctrm).setDistance(listeM.get(ctrm).getDistance()+1);
+                            listeM.get(ctrm).x--;
+
+                            invalidate();
+                            if (listeM.get(ctrm).distance== listeM.get(ctrm).distanceMax || listeM.get(ctrm).getX()==0){
+                                listeM.get(ctrm).flag=false;
+                                listeM.get(ctrm).distance=0;
+                            }
+
+                        } else if(!listeM.get(ctrm).flag) {
+                            listeM.get(ctrm).x++;
+                            listeM.get(ctrm).distance=listeM.get(ctrm).distance+1;
+                            invalidate();
+                            if (listeM.get(ctrm).distance== listeM.get(ctrm).distanceMax ||listeM.get(ctrm).getX()==19){
                                 listeM.get(ctrm).flag=true;
                                 listeM.get(ctrm).distance=0;
                             }
