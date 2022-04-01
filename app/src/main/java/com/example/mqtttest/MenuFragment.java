@@ -6,9 +6,13 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +24,8 @@ import android.widget.TextView;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +42,10 @@ public class MenuFragment extends Fragment {
     CardView cardView;
     Button btnPersonnages, btnStart;
     String TAG = "MenuFragment";
-    private InterfaceMenu interfaceMenu;
+    public InterfaceMenu interfaceMenu;
+    public AdapterListLeader adapterList;
+    RecyclerView rvListe;
+    public List<Leaderboard> leaderboardList;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -45,7 +54,9 @@ public class MenuFragment extends Fragment {
     public interface InterfaceMenu{
         void showFragment(Fragment f);
         void setInfoMenu(CardView cv, TextView username, TextView chaName, TextView chaLevel, TextView chaHP, TextView chaMP);
+        void getLeaderBoard(AdapterListLeader adapterList, RecyclerView rvList) throws JSONException;
         void changeRotation();
+        void setUsername(TextView tvUsername);
     }
 
     public static MenuFragment newInstance() {
@@ -79,13 +90,16 @@ public class MenuFragment extends Fragment {
         btnPersonnages = view.findViewById(R.id.btnMenuPersonnages);
         btnStart = view.findViewById(R.id.btnMenuStart);
 
-        //tvUsername.setText(interfaceMenu.getAccount().username);
-        interfaceMenu.setInfoMenu(cardView, tvUsername, tvChaName, tvChaLevel, tvChaHP, tvChaMP);
-        /*
-        monViewModel.getAccounts().observe(getViewLifecycleOwner(), accounts -> {
-            tvUsername.setText(accounts.get(0).username);
-        });
-         */
+        rvListe = view.findViewById(R.id.rvListLeader);
+        rvListe.setHasFixedSize(true);
+        rvListe.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        adapterList = new AdapterListLeader(leaderboardList);
+
+        rvListe.setAdapter(adapterList);
+
+        interfaceMenu.setUsername(tvUsername);
+
 
         btnPersonnages.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,69 +129,4 @@ public class MenuFragment extends Fragment {
 
         interfaceMenu = (MenuFragment.InterfaceMenu)context;
     }
-/*
-    private void mqttInfo()
-    {
-       clientMQTT.reconnecter();
-
-        clientMQTT.mqttAndroidClient.setCallback(new MqttCallbackExtended()
-        {
-            @Override
-            public void connectComplete(boolean b, String s)
-            {
-                Log.w(TAG,"connectComplete");
-                try {
-                    Thread.sleep(2000);
-
-                    monViewModel.getAccounts().observe(getViewLifecycleOwner(), accounts -> {
-                        clientMQTT.publishMessage("getcharacter " + accounts.get(0).username + " " + accounts.get(0).password);
-                    });
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void connectionLost(Throwable throwable)
-            {
-                Log.w(TAG,"connectionLost");
-            }
-
-            @Override
-            public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception
-            {
-                Log.w(TAG, "messageArrived : " + mqttMessage.toString());
-                String msg = mqttMessage.toString();
-                ArrayList<Integer> result = findPositions(msg,' ');
-                if(msg.substring(0, result.get(0)).trim().equals("getCharacter")){
-                    //monViewModel.getCharacters().getValue().add(new Character(msg.substring(result.get(1), result.get(2) - 1), Integer.parseInt(msg.substring(result.get(2), result.get(3) -1)), Integer.parseInt(msg.substring(result.get(3), result.get(4) -1)), Integer.parseInt(msg.substring(result.get(4), result.get(5) -1)), Integer.parseInt(msg.substring(result.get(5), result.get(6) -1)), msg.substring(result.get(6))));
-                    monViewModel.getCharacters().getValue().add(new Character(msg.substring(result.get(2) + 2, result.get(3) - 2), Integer.parseInt(msg.substring(result.get(3) + 1, result.get(4) -1)), Integer.parseInt(msg.substring(result.get(4) + 1, result.get(5) -1)), Integer.parseInt(msg.substring(result.get(5) + 1, result.get(6) -1)), Integer.parseInt(msg.substring(result.get(6) + 1, result.get(7) -1)), msg.substring(result.get(7) + 2, result.get(8) - 3)));
-                    monViewModel.getCharacters().observe(getViewLifecycleOwner(), characters -> {
-                        Log.d(TAG, characters.get(0).toString());
-                        tvChaName.setText(characters.get(0).name);
-                        tvChaLevel.setText(String.valueOf(characters.get(0).level));
-                        tvChaHP.setText(String.valueOf(characters.get(0).hp));
-                        tvChaMP.setText(String.valueOf(characters.get(0).mp));
-                    });
-                }
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken)
-            {
-                Log.w(TAG, "deliveryComplete");
-            }
-        });
-    }
-
-    public ArrayList<Integer> findPositions(String string, char character) {
-        ArrayList<Integer> positions = new ArrayList<>();
-        for (int i = 0; i < string.length(); i++){
-            if (string.charAt(i) == character) {
-                positions.add(i);
-            }
-        }
-        return positions;
-    }
- */
 }

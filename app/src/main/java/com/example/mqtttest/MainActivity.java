@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     List<Piege>listeP = new ArrayList<>();
     List<Monstre> listeM = new ArrayList();
     List<Flag> listeCheckPoint = new ArrayList();
+    JSONArray j;
     View view;
     boolean co;
     int ctr = 0;
@@ -90,6 +91,11 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     }
 
     @Override
+    public void addCha(String chaName) {
+        clientMQTT.publishMessage("addcharacter " + account.username + " " + account.password + " " + chaName);
+    }
+
+    @Override
     public void getCharacters(AdapterList adapterList, RecyclerView rvlist) {
         adapterList = new AdapterList(characterList);
         rvlist.setAdapter(adapterList);
@@ -104,6 +110,11 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
     public void changeRotation() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         showFragment(gameFragment);
+    }
+
+    @Override
+    public void setUsername(TextView tvUsername) {
+        tvUsername.setText(account.username);
     }
 
     private void mqttInfo()
@@ -141,16 +152,23 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                     }
 
                     try {
-                        if(msg.substring(0,19).equals("getLeaderboardFinal")) {
+                        if(msg.substring(0, result.get(0)).trim().equals("getLeaderboardM")) {
 
+                            Log.d(TAG, " subJson: " + msg.substring(16));
+                            j =  new JSONArray(msg.substring(16));
+                            showFragment(menuFragment);
+                        }
 
-                            JSONArray leaderboard =  new JSONArray(msg.substring(20));
-                            Log.d(TAG, " sub19: " + msg.substring(21));
+                    } catch (Exception e) {}
+
+                    try {
+                        if(msg.substring(0, result.get(0)).trim().equals("getLeaderboardFinal")) {
+
+                            Log.d(TAG, " subJson: " + msg.substring(20));
+                            JSONArray arrayj =  new JSONArray(msg.substring(20));
                             Fragment f = fragmentManager.findFragmentById(R.id.fragmentContainerView);
                             if(f instanceof GameFragment) {
-                                Log.d(TAG, " InPop");
-                                ((GameFragment) f).workerThread(leaderboard);
-
+                                ((GameFragment) f).workerThread(arrayj);
                             } else {
                                 Log.d(TAG, "else sortie");
                             }
@@ -308,13 +326,14 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
                     {
                         account = new Account(msg.substring(result.get(1), result.get(2)).trim(), msg.substring(result.get(2)).trim());
                         clientMQTT.publishMessage("getcharacter " + account.username + " " + account.password);
+                        clientMQTT.publishMessage("getLeaderboardMenu");
                         Toast.makeText(c, "connexion en cours", Toast.LENGTH_SHORT).show();
                     }
                     else if(msg.substring(0, result.get(0)).trim().equals("getCharacter") && msg.length() > 25){
                         List<Character> c = new ArrayList();
                         c.add(new Character(msg.substring(result.get(2) + 2, result.get(3) - 2), Integer.parseInt(msg.substring(result.get(3) + 1, result.get(4) - 1)), Integer.parseInt(msg.substring(result.get(4) + 1, result.get(5) - 1)), Integer.parseInt(msg.substring(result.get(5) + 1, result.get(6) - 1)), Integer.parseInt(msg.substring(result.get(6) + 1, result.get(7) - 1)), msg.substring(result.get(7) + 2, result.get(8) - 3)));
                         characterList = c;
-                        showFragment(menuFragment);
+
                     }
                     else if(msg.equals("addUser : Success")) {
                         showFragment(loginFragment);
@@ -522,5 +541,19 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Int
         else {
             cv.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void getLeaderBoard(AdapterListLeader adapterList, RecyclerView rvList) throws JSONException {
+        List<Leaderboard> lLeader= new ArrayList<>();
+
+        int n = j.length();
+        for(int i=0;i<n;i++){
+            JSONObject score = j.getJSONObject(i);
+            lLeader.add(new Leaderboard(score.getString("name"),score.getInt("nbrCout"),score.getInt("temps")));
+        }
+
+        adapterList = new AdapterListLeader(lLeader);
+        rvList.setAdapter(adapterList);
     }
 }
